@@ -31,11 +31,15 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+
+import javax.net.ssl.SSLSocketFactory;
 
 /**
  * This class is used to create and send a request. It allows to add all the parameters to the request
@@ -56,6 +60,18 @@ public class BaseRequest {
     private Headers.Builder headers = new Headers.Builder();
 
     private static final OkHttpClient httpClient = new OkHttpClient();
+
+    static {
+        SSLSocketFactory tlsEnabledSSLSocketFactory;
+        try {
+            tlsEnabledSSLSocketFactory = new TLSEnabledSSLSocketFactory();
+            httpClient.setSslSocketFactory(tlsEnabledSSLSocketFactory);
+        } catch (KeyManagementException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * The TEST string
